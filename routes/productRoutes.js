@@ -11,6 +11,17 @@ const {
 
 const { protect, admin } = require("../middleware/authMiddleware");
 
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Get all products
+ *     description: Returns paginated list of products
+ *     responses:
+ *       200:
+ *         description: List of products
+ */
+
 
 // Public routes
 router.get("/", getProducts);
