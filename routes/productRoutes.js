@@ -29,6 +29,37 @@ router.get("/:id", getProductById);
 
 
 // Admin routes
+
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Create product
+ *     description: Admin can create a product
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               stock:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Product created
+ */
 router.post("/", protect, admin, createProduct);
 router.put("/:id", protect, admin, updateProduct);
 router.delete("/:id", protect, admin, deleteProduct);
