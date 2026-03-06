@@ -34,8 +34,7 @@ router.get("/:id", getProductById);
  * @swagger
  * /api/products:
  *   post:
- *     summary: Create product
- *     description: Admin can create a product
+ *     summary: Create a product
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -45,20 +44,35 @@ router.get("/:id", getProductById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - price
+ *               - category
+ *               - stock
  *             properties:
  *               name:
  *                 type: string
+ *                 example: iPhone 15
  *               description:
  *                 type: string
+ *                 example: Apple smartphone
  *               price:
  *                 type: number
+ *                 minimum: 1
+ *                 example: 1200
  *               category:
  *                 type: string
+ *                 example: Electronics
  *               stock:
- *                 type: number
+ *                 type: integer
+ *                 minimum: 0
+ *                 example: 10
  *     responses:
  *       201:
  *         description: Product created
+ *       400:
+ *         description: Invalid product data
  */
 router.post("/", protect, admin, createProduct);
 router.put("/:id", protect, admin, updateProduct);
