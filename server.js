@@ -41,5 +41,5 @@ app.listen(PORT, () => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "API Working" });
+  res.json({ status: "API Working V2" });
 });
