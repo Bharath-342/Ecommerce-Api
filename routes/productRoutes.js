@@ -1,40 +1,37 @@
 const express = require("express");
 const router = express.Router();
-
 const {
-    createProduct,
-    getProducts,
-    getProductById,
-    updateProduct,
-    deleteProduct
+  getProducts,
+  createProduct,
+  deleteProduct
 } = require("../controllers/productController");
 
 const { protect, admin } = require("../middleware/authMiddleware");
 
 /**
  * @swagger
+ * tags:
+ *   name: Products
+ *   description: Product management APIs
+ */
+
+/**
+ * @swagger
  * /api/products:
  *   get:
  *     summary: Get all products
- *     description: Returns paginated list of products
+ *     tags: [Products]
  *     responses:
  *       200:
  *         description: List of products
  */
-
-
-// Public routes
 router.get("/", getProducts);
-router.get("/:id", getProductById);
-
-
-// Admin routes
 
 /**
  * @swagger
  * /api/products:
  *   post:
- *     summary: Create a product
+ *     summary: Create a new product
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -44,39 +41,37 @@ router.get("/:id", getProductById);
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
- *               - description
- *               - price
- *               - category
- *               - stock
  *             properties:
  *               name:
  *                 type: string
- *                 example: iPhone 15
- *               description:
- *                 type: string
- *                 example: Apple smartphone
  *               price:
  *                 type: number
- *                 minimum: 1
- *                 example: 1200
- *               category:
+ *               description:
  *                 type: string
- *                 example: Electronics
- *               stock:
- *                 type: integer
- *                 minimum: 0
- *                 example: 10
  *     responses:
  *       201:
  *         description: Product created
- *       400:
- *         description: Invalid product data
  */
 router.post("/", protect, admin, createProduct);
-router.put("/:id", protect, admin, updateProduct);
-router.delete("/:id", protect, admin, deleteProduct);
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete a product
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Product deleted
+ */
+router.delete("/:id", protect, admin, deleteProduct);
 
 module.exports = router;
