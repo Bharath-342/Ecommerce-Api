@@ -34,12 +34,38 @@ exports.createProduct = async (req, res) => {
 
 
 // Get Products (Pagination + Search)
-exports.getProducts = async (req, res, next) => {
+exports.getProducts = async (req, res) => {
 
-  next(new Error("Global error middleware working"));
+    try {
+
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 5;
+        const search = req.query.search || "";
+
+        const { count, rows: products } = await Product.findAndCountAll({
+            where: process.sequelize?.where(
+                process.sequelize?.fn("LOWER", process.sequelize?.col("name")),
+                "LIKE",
+                `%${search.toLowerCase()}%`
+            ),
+            offset: (page - 1) * limit,
+            limit: limit
+        });
+
+        res.json({
+            page,
+            totalPages: Math.ceil(count / limit),
+            totalProducts: count,
+            products
+        });
+
+    } catch (error) {
+
+        res.status(500).json({ message: error.message });
+
+    }
 
 };
-
 
 // Get Single Product
 exports.getProductById = async (req, res) => {
