@@ -1,42 +1,53 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../config/db");
+const User = require("./User");
 
-const productSchema = new mongoose.Schema(
-{
-    name: {
-        type: String,
-        required: true
+const Product = sequelize.define(
+    "Product",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            required: true,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING,
+            required: true,
+            allowNull: false,
+        },
+        price: {
+            type: DataTypes.DECIMAL(10, 2),
+            required: true,
+            allowNull: false,
+        },
+        category: {
+            type: DataTypes.STRING,
+            required: true,
+            allowNull: false,
+        },
+        stock: {
+            type: DataTypes.INTEGER,
+            required: true,
+            defaultValue: 0,
+        },
+        createdBy: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: User,
+                key: "id",
+            },
+        },
     },
-
-    description: {
-        type: String,
-        required: true
-    },
-
-    price: {
-        type: Number,
-        required: true
-    },
-
-    category: {
-        type: String,
-        required: true
-    },
-
-    stock: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+    {
+        timestamps: true,
     }
-
-},
-{
-    timestamps: true
-}
 );
 
-module.exports = mongoose.model("Product", productSchema);
+Product.belongsTo(User, { foreignKey: "createdBy" });
+
+module.exports = Product;

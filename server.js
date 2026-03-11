@@ -1,7 +1,8 @@
+ require("dotenv").config();
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const connectDB = require("./config/db");
+const { connectDB } = require("./config/db");
 const { swaggerUi, swaggerSpec } = require("./config/swagger");
 
 const authRoutes = require("./routes/authRoutes");
@@ -9,7 +10,7 @@ const productRoutes = require("./routes/productRoutes");
 
 const { protect } = require("./middleware/authMiddleware");
 
-dotenv.config();
+
 
 const app = express();
 
