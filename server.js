@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 
 const { protect } = require("./middleware/authMiddleware");
+const errorHandler = require("./middleware/errorMiddleware");
 
 
 
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 // Product Routes
 app.use("/api/products", productRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(errorHandler);
 
 // Protected test route
 app.get("/api/protected", protect, (req, res) => {
