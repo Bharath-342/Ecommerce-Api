@@ -1,6 +1,8 @@
 const Product = require("../models/Product");
 const productSchema = require("../validations/productValidation");
+const mongoose = require("mongoose");
 
+// Create Product
 exports.createProduct = async (req, res) => {
 
     try {
@@ -42,20 +44,20 @@ exports.getProducts = async (req, res) => {
         const limit = Number(req.query.limit) || 5;
         const search = req.query.search || "";
 
-        const { count, rows: products } = await Product.findAndCountAll({
-            where: process.sequelize?.where(
-                process.sequelize?.fn("LOWER", process.sequelize?.col("name")),
-                "LIKE",
-                `%${search.toLowerCase()}%`
-            ),
-            offset: (page - 1) * limit,
-            limit: limit
-        });
+        const query = {
+            name: { $regex: search, $options: "i" }
+        };
+
+        const totalProducts = await Product.countDocuments(query);
+
+        const products = await Product.find(query)
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         res.json({
             page,
-            totalPages: Math.ceil(count / limit),
-            totalProducts: count,
+            totalPages: Math.ceil(totalProducts / limit),
+            totalProducts,
             products
         });
 
@@ -67,14 +69,13 @@ exports.getProducts = async (req, res) => {
 
 };
 
+
 // Get Single Product
 exports.getProductById = async (req, res) => {
 
-    console.log("Pagination controller running");
-
     try {
 
-        const product = await Product.findByPk(req.params.id);
+        const product = await Product.findById(req.params.id);
 
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
@@ -93,11 +94,12 @@ exports.getProductById = async (req, res) => {
 
 // Update Product
 exports.updateProduct = async (req, res) => {
+
   try {
 
     const { id } = req.params;
 
-    const product = await Product.findByPk(id);
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -117,8 +119,11 @@ exports.updateProduct = async (req, res) => {
     });
 
   } catch (error) {
+
     res.status(500).json({ message: error.message });
+
   }
+
 };
 
 
@@ -127,13 +132,13 @@ exports.deleteProduct = async (req, res) => {
 
     try {
 
-        const product = await Product.findByPk(req.params.id);
+        const product = await Product.findById(req.params.id);
 
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        await product.destroy();
+        await Product.findByIdAndDelete(req.params.id);
 
         res.json({ message: "Product deleted successfully" });
 

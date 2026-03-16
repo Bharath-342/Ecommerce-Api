@@ -6,9 +6,10 @@ exports.registerUser = async (req, res) => {
 
     try {
 
-        const { name, email, password ,role} = req.body;
+        const { name, email, password, role } = req.body;
 
-        const existingUser = await User.findOne({ where: { email } });
+        // MongoDB query (no 'where')
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
@@ -16,21 +17,19 @@ exports.registerUser = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        
-
-const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    role: role || "user"
-});
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: role || "user"
+        });
 
         res.status(201).json({
-            id: user.id,
+            id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
-            token: generateToken(user.id)
+            token: generateToken(user._id)
         });
 
     } catch (error) {
@@ -48,7 +47,8 @@ exports.loginUser = async (req, res) => {
 
         const { email, password } = req.body;
 
-        const user = await User.findOne({ where: { email } });
+        // MongoDB query
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
@@ -61,10 +61,11 @@ exports.loginUser = async (req, res) => {
         }
 
         res.json({
-            id: user.id,
+            id: user._id,
             name: user.name,
             email: user.email,
-            token: generateToken(user.id)
+            role: user.role,
+            token: generateToken(user._id)
         });
 
     } catch (error) {
