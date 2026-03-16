@@ -69,7 +69,7 @@ router.post("/", protect, admin, createProduct);
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -102,7 +102,7 @@ router.put("/:id", protect, admin, updateProduct);
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
  *         description: Product deleted
